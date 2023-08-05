@@ -2,15 +2,15 @@ import pytest
 
 import settings
 
-from utils.api import Register
-from utils.models import CreateUser
-from schemas.registration import registration_schema
+from utils.api import Post
+from utils.models import RegisterUser
+from schemas.post import registration_schema
 
 URL = settings.URL
 
 
 @pytest.fixture()
 def create_user():
-    body = CreateUser.random_user_c()
-    response = Register(url=URL).register_user(body=body, schema=registration_schema)
+    body = RegisterUser.random_user_c()
+    response = Post(url=URL).register_user(body=body, schema=registration_schema)
     return response.json()

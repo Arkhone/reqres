@@ -1,21 +1,32 @@
 import pytest
 
 import settings
+import schemas.get as schemas
 from utils.api import Get
-from schemas.get import single_user_schema
-from schemas.get import list_users_schema
-from settings import GET_LIST_USERS
-URL = settings.URL
 
 
-@pytest.mark.parametrize("pref, schema_type, code", [
-    ("/api/users/2", "single_user_schema", 200),
-    ("/api/users?page=2", "list_users_schema", 200),
-])
-def test_get(pref, schema_type, code):
-    response = Get(url=URL).get(pref, schema=schema_type)
-    assert response.status_code == code
+@pytest.fixture(params=[Get(url=settings.URL).get(settings.GET_SINGLE_USER, schema=schemas.single_user_schema),
+                        Get(url=settings.URL).get(settings.GET_LIST_USERS, schema=schemas.list_users_schema),
+                        Get(url=settings.URL).get(settings.GET_SINGLE_RES, schema=schemas.single_res_schema),
+                        Get(url=settings.URL).get(settings.GET_LIST_RES, schema=schemas.list_res_schema),
+                        Get(url=settings.URL).get(settings.GET_DELAYED, schema=schemas.delayed_schema)
+                        ])
+def get_200(request):
+    return request.param
 
-# def test_get_list_users():
-# response = Get(url=URL).get(settings.GET_LIST_USERS, schema=list_users_schema)
-# assert response.status_code == 200
+
+@pytest.fixture(params=[Get(url=settings.URL).get(settings.GET_S_USER_NOT, schema=schemas.s_res_not_schema),
+                        Get(url=settings.URL).get(settings.GET_S_RES_NOT, schema=schemas.s_res_not_schema),
+                        ])
+def get_404(request):
+    return request.param
+
+
+def test_get_200(get_200):
+    response = get_200
+    assert response.status_code == 200
+
+
+def test_get_404(get_404):
+    response = get_404
+    assert response.status_code == 404
