@@ -1,16 +1,16 @@
 import pytest
 
+from selenium import webdriver
+
 import settings
 
-from utils.api import Post
-from utils.models import RegisterUser
-from schemas.post import registration_schema
 
-URL = settings.URL
-
-
-@pytest.fixture()
-def create_user():
-    body = RegisterUser.random_user_c()
-    response = Post(url=URL).register_user(body=body, schema=registration_schema)
-    return response.json()
+@pytest.fixture
+def driver():
+    # Инициализация WebDriver и открытие страницы авторизации
+    driver = webdriver.Chrome()
+    driver.maximize_window()
+    driver.get(settings.URL)
+    yield driver
+    driver.close()
+    driver.quit()
