@@ -23,3 +23,5 @@ put_update_schema = {
         "updatedAt": {"type": "string"}
     }
 }
+
+delete_schema = {}
