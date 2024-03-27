@@ -13,7 +13,7 @@ create_schema = {
     }
 }
 
-registration_schema = {
+reg_schema = {
     "required": [
         "id",
         "token"
@@ -24,7 +24,7 @@ registration_schema = {
     }
 }
 
-registration_unsucc_schema = {
+reg_unsuccess_schema = {
     "required": ["error"],
     "properties": {
         "error": {"type": "string"}
