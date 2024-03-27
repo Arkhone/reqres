@@ -1,37 +1,38 @@
-import settings
-import schemas.post as schemas
+import pytest
 
+import settings as s
+import schemas.post as sch
+
+from jsonschema import validate
 from utils.api import Post
 from utils.models import RegisterUser
 
 
-def test_create():
-    body = RegisterUser.random_user_c()
-    response = Post(url=settings.URL).create_user(body=body, schema=schemas.create_schema)
-    assert response.status_code == 201
+@pytest.fixture(params=[(s.POST_CREATE_USER, s.CODE_201, sch.create_schema, RegisterUser.random_user_c()),
+                        (s.POST_REGISTER_USER, s.CODE_200, sch.registration_schema, RegisterUser.registration_user())
+                        ])
+def post_data(request):
+    return request.param
+
+
+def test_create(post_data):
+    prefix, kod, schema, body = post_data
+    response = Post(url=s.URL).post(prefix=prefix, body=body)
+    validate(instance=response.json(), schema=schema)
+    assert response.status_code == kod
     assert response.json().get('id')
 
 
-def test_registration():
-    body = RegisterUser.registration_user()
-    response = Post(url=settings.URL).register_user(body=body, schema=schemas.registration_schema)
-    assert response.status_code == 200
-    assert response.json().get('id')
+@pytest.fixture(params=[(s.POST_LOGIN, s.CODE_200, sch.login_schema, RegisterUser.login_user()),
+                        (s.POST_REGISTER_USER, s.CODE_400, sch.registration_unsucc_schema, RegisterUser.invalid_user()),
+                        (s.POST_REGISTER_USER, s.CODE_400, sch.login_unsucc_schema, RegisterUser.invalid_user())
+                        ])
+def login_data(request):
+    return request.param
 
 
-def test_login():
-    body = RegisterUser.login_user()
-    response = Post(url=settings.URL).login_user(body=body, schema=schemas.login_schema)
-    assert response.status_code == 200
-
-
-def test_registration_unsuccess():
-    body = RegisterUser.invalid_user()
-    response = Post(url=settings.URL).register_user(body=body, schema=schemas.registration_unsucc_schema)
-    assert response.status_code == 400
-
-
-def test_login_unsuccess():
-    body = RegisterUser.invalid_user()
-    response = Post(url=settings.URL).login_user(body=body, schema=schemas.login_unsucc_schema)
-    assert response.status_code == 400
+def test_login(login_data):
+    prefix, kod, schema, body = login_data
+    response = Post(url=s.URL).post(prefix=prefix, body=body)
+    validate(instance=response.json(), schema=schema)
+    assert response.status_code == kod
