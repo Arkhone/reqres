@@ -1,23 +1,46 @@
 create_schema = {
-    "name": {"type": "string"},
-    "job": {"type": "string"},
-    "id": {"type": "string"},
-    "createdAt": {"type": "string"}
+    "required": [
+        "name",
+        "job",
+        "id",
+        "createdAt"
+    ],
+    "properties": {
+        "name": {"type": "string"},
+        "job": {"type": "string"},
+        "id": {"type": "string"},
+        "createdAt": {"type": "string"}
+    }
 }
 
-registration_schema = {
-    "id": "int",
-    "token": "string"
+reg_schema = {
+    "required": [
+        "id",
+        "token"
+    ],
+    "properties": {
+        "id": {"type": "integer"},
+        "token": {"type": "string"}
+    }
 }
 
-registration_unsucc_schema = {
-    "error": "string"
+reg_unsuccess_schema = {
+    "required": ["error"],
+    "properties": {
+        "error": {"type": "string"}
+    }
 }
 
 login_schema = {
-    "token": "string"
+    "required": ["token"],
+    "properties": {
+        "token": {"type": "string"}
+    }
 }
 
 login_unsucc_schema = {
-    "error": "string"
+    "required": ["error"],
+    "properties": {
+        "error": {"type": "string"}
+    }
 }

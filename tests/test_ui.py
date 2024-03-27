@@ -4,10 +4,10 @@ import logging
 from selenium.webdriver.common.by import By
 from jsonschema import validate
 
-import settings
-import schemas.get as schema_get
-import schemas.patch as schema_patch
-import schemas.post as schema_post
+import settings as s
+import schemas.get as sch_get
+import schemas.patch as sch_patch
+import schemas.post as sch_post
 from pages.main_page import MainPage
 
 
@@ -17,36 +17,21 @@ class TestGet:
     def set_up(self, driver):
         self.user = MainPage(driver)
 
-    @pytest.fixture(params=[(settings.LIST_USERS_BUT, settings.GET_LIST_USERS, schema_get.list_users_schema,
-                             settings.CODE_200),
-                            (settings.SINGLE_USER_BUT, settings.GET_SINGLE_USER, schema_get.single_user_schema,
-                             settings.CODE_200),
-                            (settings.USER_NOT_FOUND_BUT, settings.GET_S_USER_NOT, schema_get.s_user_not_schema,
-                             settings.CODE_404),
-                            (settings.LIST_RES_BUT, settings.GET_LIST_RES, schema_get.list_res_schema,
-                             settings.CODE_200),
-                            (settings.SINGLE_RES_BUT, settings.GET_SINGLE_RES, schema_get.single_res_schema,
-                             settings.CODE_200),
-                            (settings.RES_NOT_FOUND_BUT, settings.GET_S_RES_NOT, schema_get.s_res_not_schema,
-                             settings.CODE_404),
-                            (settings.CREATE_BUT, settings.POST_CREATE_USER, schema_post.create_schema,
-                             settings.CODE_201),
-                            (settings.PUT_BUT, settings.PUT, schema_patch.put_update_schema,
-                             settings.CODE_200),
-                            (settings.PATCH_BUT, settings.PATCH, schema_patch.patch_update_schema,
-                             settings.CODE_200),
-                            (settings.DELETE_BUT, settings.DELETE, schema_patch.delete_schema,
-                             settings.CODE_204),
-                            (settings.REG_BUT, settings.POST_REGISTER_USER, schema_post.registration_schema,
-                             settings.CODE_200),
-                            (settings.REG_UNSUCCESS_BUT, settings.POST_REGISTER_USER,
-                             schema_post.registration_unsucc_schema, settings.CODE_400),
-                            (settings.LOGIN_BUT, settings.POST_LOGIN, schema_post.login_schema,
-                             settings.CODE_200),
-                            (settings.LOGIN_UNSUCCESS_BUT, settings.POST_LOGIN, schema_post.login_unsucc_schema,
-                             settings.CODE_400),
-                            (settings.DELAYED_BUT, settings.GET_DELAYED, schema_get.delayed_schema,
-                             settings.CODE_200),
+    @pytest.fixture(params=[(s.LIST_USERS_BUT, s.GET_LIST_USERS, sch_get.list_users_schema, s.CODE_200),
+                            (s.SINGLE_USER_BUT, s.GET_SINGLE_USER, sch_get.single_user_schema, s.CODE_200),
+                            (s.USER_NOT_FOUND_BUT, s.GET_S_USER_NOT, sch_get.s_user_not_schema, s.CODE_404),
+                            (s.LIST_RES_BUT, s.GET_LIST_RES, sch_get.list_res_schema, s.CODE_200),
+                            (s.SINGLE_RES_BUT, s.GET_SINGLE_RES, sch_get.single_res_schema, s.CODE_200),
+                            (s.RES_NOT_FOUND_BUT, s.GET_S_RES_NOT, sch_get.s_res_not_schema, s.CODE_404),
+                            (s.CREATE_BUT, s.POST_CREATE_USER, sch_post.create_schema, s.CODE_201),
+                            (s.PUT_BUT, s.PUT, sch_patch.put_update_schema, s.CODE_200),
+                            (s.PATCH_BUT, s.PATCH, sch_patch.patch_update_schema, s.CODE_200),
+                            (s.DELETE_BUT, s.DELETE, sch_patch.delete_schema, s.CODE_204),
+                            (s.REG_BUT, s.POST_REGISTER_USER, sch_post.reg_schema, s.CODE_200),
+                            (s.REG_UNSUCCESS_BUT, s.POST_REGISTER_USER, sch_post.reg_unsuccess_schema, s.CODE_400),
+                            (s.LOGIN_BUT, s.POST_LOGIN, sch_post.login_schema, s.CODE_200),
+                            (s.LOGIN_UNSUCCESS_BUT, s.POST_LOGIN, sch_post.login_unsucc_schema, s.CODE_400),
+                            (s.DELAYED_BUT, s.GET_DELAYED, sch_get.delayed_schema, s.CODE_200),
                             ])
     def get_data(self, request):
         return request.param
@@ -55,9 +40,9 @@ class TestGet:
         button_locator, prefix, schema, code = get_data
         code = str(code)
         self.user.click_on(button_locator, By.XPATH)
-        self.user.wait_for_text(settings.RESPONSE_CODE, code, By.CLASS_NAME,)
-        validate(instance=self.user.get_text(settings.OUTPUT_RESPONSE, By.XPATH), schema=schema)
-        assert self.user.get_text(settings.PREFIX_URL, By.CSS_SELECTOR) == prefix
-        assert self.user.get_text(settings.RESPONSE_CODE, By.CLASS_NAME) == code
+        self.user.wait_for_text(s.RESPONSE_CODE, code, By.CLASS_NAME,)
+        validate(instance=self.user.get_text(s.OUTPUT_RESPONSE, By.XPATH), schema=schema)
+        assert self.user.get_text(s.PREFIX_URL, By.CSS_SELECTOR) == prefix
+        assert self.user.get_text(s.RESPONSE_CODE, By.CLASS_NAME) == code
         logging.info("A request with %s prefix, recieved %s code", prefix, code)
 
