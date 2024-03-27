@@ -1,23 +1,25 @@
-import pytest
+import settings as s
+import schemas.patch as sch
 
-import settings
-import schemas.patch as schemas
+from jsonschema import validate
 from utils.api import Patch
 from utils.models import UpdateUser
 
 
 def test_patch():
     body = UpdateUser.user_up()
-    response = Patch(url=settings.URL).patch(body=body, schema=schemas.patch_update_schema)
-    assert response.status_code == 200
+    response = Patch(url=s.URL).patch(s.PATCH, body=body)
+    validate(instance=response.json(), schema=sch.patch_update_schema)
+    assert response.status_code == s.CODE_200
 
 
 def test_put():
     body = UpdateUser.user_up()
-    response = Patch(url=settings.URL).put(body=body, schema=schemas.patch_update_schema)
-    assert response.status_code == 200
+    response = Patch(url=s.URL).put(s.PUT, body=body)
+    validate(instance=response.json(), schema=sch.patch_update_schema)
+    assert response.status_code == s.CODE_200
 
 
 def test_delete():
-    response = Patch(url=settings.URL).delete()
-    assert response.status_code == 204
+    response = Patch(url=s.URL).delete(s.DELETE)
+    assert response.status_code == s.CODE_204
