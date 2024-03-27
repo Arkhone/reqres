@@ -5,11 +5,11 @@ import schemas.post as sch
 
 from jsonschema import validate
 from utils.api import Post
-from utils.models import RegisterUser
+from utils.models import RegisterUser as Ru
 
 
-@pytest.fixture(params=[(s.POST_CREATE_USER, s.CODE_201, sch.create_schema, RegisterUser.random_user_c()),
-                        (s.POST_REGISTER_USER, s.CODE_200, sch.registration_schema, RegisterUser.registration_user())
+@pytest.fixture(params=[(s.POST_CREATE_USER, s.CODE_201, sch.create_schema, Ru.random_user_c()),
+                        (s.POST_REGISTER_USER, s.CODE_200, sch.registration_schema, Ru.registration_user())
                         ])
 def post_data(request):
     return request.param
@@ -23,9 +23,9 @@ def test_create(post_data):
     assert response.json().get('id')
 
 
-@pytest.fixture(params=[(s.POST_LOGIN, s.CODE_200, sch.login_schema, RegisterUser.login_user()),
-                        (s.POST_REGISTER_USER, s.CODE_400, sch.registration_unsucc_schema, RegisterUser.invalid_user()),
-                        (s.POST_REGISTER_USER, s.CODE_400, sch.login_unsucc_schema, RegisterUser.invalid_user())
+@pytest.fixture(params=[(s.POST_LOGIN, s.CODE_200, sch.login_schema, Ru.login_user()),
+                        (s.POST_REGISTER_USER, s.CODE_400, sch.registration_unsucc_schema, Ru.invalid_user()),
+                        (s.POST_REGISTER_USER, s.CODE_400, sch.login_unsucc_schema, Ru.invalid_user())
                         ])
 def login_data(request):
     return request.param
